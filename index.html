@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Syed Asad Iftikhar — AI &amp; Automation Portfolio</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind (CDN for this single-page experience) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: '#0A0A0A',
+            accent: '#FF4500',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+  <!-- Custom JS -->
+  <script src="main.js" defer></script>
+</head>
+<body class="bg-background text-slate-100 overflow-x-hidden">
+  <!-- Loader -->
+  <div id="loader" class="fixed inset-0 z-40 flex flex-col items-center justify-center gap-6">
+    <div class="font-mono text-[10px] tracking-[0.35em] uppercase text-slate-500">Loading cinematic experience</div>
+    <div class="text-3xl md:text-5xl font-display tracking-[0.25em] text-white text-center">
+      <span class="text-accent">SYED</span> ASAD
+    </div>
+    <div class="w-64 md:w-96 h-[2px] bg-slate-800 rounded-full overflow-hidden mt-6">
+      <div id="loader-bar" class="h-full w-0 bg-accent transition-all duration-100"></div>
+    </div>
+    <div id="loader-percent" class="font-mono text-[11px] tracking-[0.25em] uppercase text-slate-400 mt-2">0%</div>
+    <button id="enter-btn"
+      class="mt-6 px-6 py-2 rounded-full border border-accent/60 text-accent font-mono text-[11px] tracking-[0.25em] uppercase opacity-0 pointer-events-none transition duration-300 hover:bg-accent hover:text-black magnetic">
+      Enter Experience
+    </button>
+  </div>
+
+  <!-- Cursor spotlight -->
+  <div id="cursor-spotlight"></div>
+
+  <!-- Canvas background -->
+  <canvas id="hero-canvas"></canvas>
+  <!-- Vignette / overlay for readability -->
+  <div id="hero-overlay"
+    class="fixed inset-0 -z-5 pointer-events-none bg-gradient-to-b from-black/70 via-black/20 to-black/90"></div>
+
+  <!-- Top navigation -->
+  <header class="site-header fixed top-0 inset-x-0 z-30">
+    <div
+      class="max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-3 flex items-center justify-between gap-4 text-[11px] font-mono tracking-[0.25em] uppercase">
+      <a href="#scroll-hero" class="inline-flex items-center gap-2 group">
+        <span
+          class="relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/60 border border-white/10 overflow-hidden">
+          <span
+            class="absolute inset-0 bg-gradient-to-tr from-accent/60 via-orange-500/40 to-amber-400/60 opacity-80 group-hover:opacity-100 transition"></span>
+          <span class="relative text-[11px] font-mono tracking-[0.25em] uppercase text-white">SA</span>
+        </span>
+        <span
+          class="hidden sm:inline-flex text-[10px] tracking-[0.30em] text-slate-300 group-hover:text-accent transition">
+          Syed&nbsp;Asad&nbsp;Iftikhar
+        </span>
+      </a>
+      <nav class="flex items-center gap-4 md:gap-6">
+        <a href="#experience"
+          class="nav-link text-[10px] font-mono tracking-[0.25em] uppercase text-slate-400 hover:text-accent transition">
+          Experience
+        </a>
+        <a href="#skills"
+          class="nav-link text-[10px] font-mono tracking-[0.25em] uppercase text-slate-400 hover:text-accent transition">
+          Skills
+        </a>
+        <a href="#background"
+          class="nav-link text-[10px] font-mono tracking-[0.25em] uppercase text-slate-400 hover:text-accent transition">
+          Background
+        </a>
+        <a href="#cta"
+          class="nav-link hidden sm:inline-flex text-[10px] font-mono tracking-[0.25em] uppercase text-slate-400 hover:text-accent transition">
+          Contact
+        </a>
+        <button id="theme-toggle" type="button"
+          class="relative inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-[10px] font-mono tracking-[0.25em] uppercase text-slate-300 hover:border-accent/70 hover:text-accent transition">
+          <span
+            class="theme-toggle-icon inline-flex h-4 w-4 rounded-full bg-gradient-to-tr from-slate-900 via-slate-700 to-slate-500 shadow-[0_0_10px_rgba(15,23,42,0.9)]"></span>
+          <span class="theme-toggle-label">Light</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="relative z-10">
+    <!-- Hero / Scroll sequence section -->
+    <section id="scroll-hero" class="relative h-[180vh]">
+      <div class="sticky top-0 min-h-screen flex items-center">
+        <div id="hero-inner"
+          class="w-full max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-8 flex flex-col md:flex-row gap-12 md:gap-16">
+          <!-- Identity Block (Left) -->
+          <div class="hero-left flex-1 flex flex-col justify-center space-y-6">
+            <p class="font-mono text-[10px] md:text-xs tracking-[0.45em] uppercase text-accent">
+              HEY, WELCOME TO THE WORLD OF
+            </p>
+            <h1 class="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[0.9]">
+              <span class="block">SYED ASAD</span>
+              <span class="block hero-title-accent">IFTIKHAR</span>
+            </h1>
+
+            <div
+              class="hero-chips mt-4 flex flex-wrap gap-3 text-[10px] md:text-[11px] font-mono tracking-[0.18em] uppercase text-slate-300">
+              <div
+                class="flex items-center gap-2 rounded-full border border-white/10 bg-black/50 px-4 py-2 backdrop-blur-md">
+                <span class="text-accent">#01</span>
+                <span>AI Automation (n8n &amp; ElevenLabs)</span>
+              </div>
+              <div
+                class="flex items-center gap-2 rounded-full border border-white/10 bg-black/50 px-4 py-2 backdrop-blur-md">
+                <span class="text-accent">#02</span>
+                <span>Flutter Development</span>
+              </div>
+              <div
+                class="flex items-center gap-2 rounded-full border border-white/10 bg-black/50 px-4 py-2 backdrop-blur-md">
+                <span class="text-accent">#03</span>
+                <span>Computer Vision (YOLO)</span>
+              </div>
+              <div
+                class="flex items-center gap-2 rounded-full border border-white/10 bg-black/50 px-4 py-2 backdrop-blur-md">
+                <span class="text-accent">#04</span>
+                <span>Cloud Infrastructure (AWS)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Value Proposition Block (Right) -->
+          <div class="hero-right flex-1 flex flex-col justify-center items-start md:items-end space-y-4 text-right">
+            <h2 class="font-sans text-lg md:text-xl lg:text-2xl font-semibold max-w-md">
+              Final-year Computer Engineering student building AI, mobile and cloud systems that actually ship.
+            </h2>
+            <p class="text-sm md:text-base text-slate-300 max-w-md">
+              BSc Computer Engineering at Bahria University (CGPA 3.44/4.00), focused on AI, Flutter, and scalable
+              cloud architecture — currently leading WHEATIFY, an AI-powered wheat seed grading system with NARC.
+            </p>
+            <div
+              class="pt-4 flex flex-col items-start md:items-end gap-2 text-[11px] font-mono tracking-[0.25em] uppercase text-slate-500">
+              <span class="inline-flex items-center gap-2">
+                <span class="inline-block h-px w-6 bg-accent"></span>
+                Bahria University · Computer Engineering
+              </span>
+              <span>Islamabad, Pakistan</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience & Projects -->
+    <section id="experience" class="relative py-24 md:py-32 px-6 md:px-10 lg:px-16">
+      <div class="max-w-6xl mx-auto">
+        <div class="reveal-up mb-10">
+          <p class="font-mono text-[10px] tracking-[0.35em] uppercase text-accent mb-3">Experience &amp; Projects</p>
+          <h2 class="font-display text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+            Building Practical Systems<br />
+            For a Smarter Future.
+          </h2>
+        </div>
+
+        <div class="grid gap-6 md:gap-8 md:grid-cols-2">
+          <!-- WHEATIFY -->
+          <article class="glass-card reveal-up rounded-2xl p-6 md:p-7 border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-mono tracking-[0.25em] uppercase text-accent">WHEATIFY</span>
+              <span class="text-[10px] font-mono tracking-[0.25em] uppercase text-slate-500">Computer Vision · NARC</span>
+            </div>
+            <h3 class="text-lg md:text-xl font-semibold mb-3">AI Wheat Seed Grading System</h3>
+            <p class="text-sm md:text-[15px] text-slate-300 leading-relaxed mb-4">
+              Final year project in collaboration with the National Agricultural Research Centre (NARC), automating
+              wheat seed quality analysis using YOLO-based computer vision.
+            </p>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Built a custom grading dataset and a Flutter mobile app that calls the model via REST APIs to deliver
+              consistent, real-time grading in the field.
+            </p>
+            <div class="flex flex-wrap gap-2 text-[11px] font-mono tracking-[0.18em] uppercase text-slate-400">
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">YOLO</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">Flutter</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">Computer Vision</span>
+            </div>
+          </article>
+
+          <!-- AI Voice Receptionist -->
+          <article class="glass-card reveal-up rounded-2xl p-6 md:p-7 border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-mono tracking-[0.25em] uppercase text-accent">AI Voice Receptionist</span>
+              <span class="text-[10px] font-mono tracking-[0.25em] uppercase text-slate-500">Automation · Real Estate</span>
+            </div>
+            <h3 class="text-lg md:text-xl font-semibold mb-3">Autonomous Voice Agent for Real Estate &amp; CRM</h3>
+            <p class="text-sm md:text-[15px] text-slate-300 leading-relaxed mb-4">
+              Built a self-initiated AI voice agent using ElevenLabs and n8n to answer calls, qualify real-estate leads
+              and sync all relevant context into existing CRMs.
+            </p>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Engineered workflows that bridge voice APIs with databases for automated lead enrichment, routing and
+              scoring, so sales teams spend more time closing instead of handling busywork.
+            </p>
+            <div class="flex flex-wrap gap-2 text-[11px] font-mono tracking-[0.18em] uppercase text-slate-400">
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">ElevenLabs</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">n8n</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">CRM Automation</span>
+            </div>
+          </article>
+
+          <!-- Sign Language Translation -->
+          <article class="glass-card reveal-up rounded-2xl p-6 md:p-7 border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-mono tracking-[0.25em] uppercase text-accent">Sign Language Translation</span>
+              <span class="text-[10px] font-mono tracking-[0.25em] uppercase text-slate-500">IoT · Wearable</span>
+            </div>
+            <h3 class="text-lg md:text-xl font-semibold mb-3">ESP32-based Smart Glove</h3>
+            <p class="text-sm md:text-[15px] text-slate-300 leading-relaxed mb-4">
+              Academic project: designed a wearable glove using ESP32 and flex sensors to capture hand gestures and
+              translate them into readable text and synthesized speech.
+            </p>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Demonstrates how embedded hardware, firmware and software can work together to reduce communication
+              barriers for the hearing-impaired.
+            </p>
+            <div class="flex flex-wrap gap-2 text-[11px] font-mono tracking-[0.18em] uppercase text-slate-400">
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">ESP32</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">Flex Sensors</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">IoT</span>
+            </div>
+          </article>
+
+          <!-- Cloud Infrastructure -->
+          <article class="glass-card reveal-up rounded-2xl p-6 md:p-7 border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-mono tracking-[0.25em] uppercase text-accent">Cloud Infrastructure</span>
+              <span class="text-[10px] font-mono tracking-[0.25em] uppercase text-slate-500">AWS · DevOps</span>
+            </div>
+            <h3 class="text-lg md:text-xl font-semibold mb-3">Orchestrated EC2 &amp; S3 Environments</h3>
+            <p class="text-sm md:text-[15px] text-slate-300 leading-relaxed mb-4">
+              Designed and deployed scalable cloud environments using AWS EC2 for compute and S3 for optimized data
+              storage to host AI workloads and backends.
+            </p>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Implemented containerized deployments and automation-first workflows to improve reliability and reduce
+              manual server management.
+            </p>
+            <div class="flex flex-wrap gap-2 text-[11px] font-mono tracking-[0.18em] uppercase text-slate-400">
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">AWS EC2</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">S3</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">Docker</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">Cloud Architecture</span>
+            </div>
+          </article>
+        </div>
+
+        <!-- Professional Experience -->
+        <div class="grid gap-6 md:gap-8 md:grid-cols-2 mt-12">
+          <article class="glass-card reveal-up rounded-2xl p-6 md:p-7 border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-mono tracking-[0.25em] uppercase text-accent">Centre of Excellence</span>
+              <span class="text-[10px] font-mono tracking-[0.25em] uppercase text-slate-500">AI Intern · Jul–Aug
+                2025</span>
+            </div>
+            <h3 class="text-lg md:text-xl font-semibold mb-3">AI Intern — Agricultural &amp; Medical AI</h3>
+            <p class="text-sm md:text-[15px] text-slate-300 leading-relaxed mb-3">
+              Developed a Flutter-based mobile app integrated with a backend chatbot to provide tailored agricultural
+              guidance to farmers.
+            </p>
+            <p class="text-xs text-slate-400 leading-relaxed mb-3">
+              Managed dataset preparation and annotation for medical AI models and researched hardware integration for
+              IoT-based fertilizer prediction systems.
+            </p>
+            <div class="flex flex-wrap gap-2 text-[11px] font-mono tracking-[0.18em] uppercase text-slate-400">
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">Flutter</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">Chatbots</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">Dataset Curation</span>
+            </div>
+          </article>
+
+          <article class="glass-card reveal-up rounded-2xl p-6 md:p-7 border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-mono tracking-[0.25em] uppercase text-accent">Teknoloje Solutions</span>
+              <span class="text-[10px] font-mono tracking-[0.25em] uppercase text-slate-500">Cybersecurity Intern</span>
+            </div>
+            <h3 class="text-lg md:text-xl font-semibold mb-3">Cybersecurity Intern — Vulnerability Analysis</h3>
+            <p class="text-sm md:text-[15px] text-slate-300 leading-relaxed mb-3">
+              Gained practical exposure to core information security protocols and defensive strategies.
+            </p>
+            <p class="text-xs text-slate-400 leading-relaxed mb-3">
+              Conducted vulnerability assessments to identify security gaps and potential network risks, helping
+              strengthen internal security posture.
+            </p>
+            <div class="flex flex-wrap gap-2 text-[11px] font-mono tracking-[0.18em] uppercase text-slate-400">
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">InfoSec</span>
+              <span class="px-3 py-1 rounded-full bg-black/40 border border-white/10">Vulnerability Assessment</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Gallery -->
+    <section id="gallery" class="relative py-16 md:py-24 px-6 md:px-10 lg:px-16">
+      <div class="max-w-6xl mx-auto">
+        <div class="reveal-up mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <p class="font-mono text-[10px] tracking-[0.35em] uppercase text-accent mb-3">Engineering Visuals</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold leading-tight">
+              A snapshot of the systems<br />
+              I love building.
+            </h2>
+          </div>
+          <p class="text-sm md:text-[15px] text-slate-300 max-w-md">
+            High-level looks at my AI, mobile, and cloud work — the kind of product views hiring managers expect to
+            see when systems are ready for real users.
+          </p>
+        </div>
+
+        <div class="project-visuals">
+          <figure class="visual-card">
+            <svg class="visual-card-img" viewBox="0 0 960 600" role="img"
+              aria-label="Mock analytics screen for WHEATIFY wheat seed grading with confidence scores and batch summaries.">
+              <defs>
+                <linearGradient id="wheatifyGradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#0f172a" />
+                  <stop offset="50%" stop-color="#1e293b" />
+                  <stop offset="100%" stop-color="#020617" />
+                </linearGradient>
+                <linearGradient id="wheatifyAccent" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#f97316" />
+                  <stop offset="100%" stop-color="#facc15" />
+                </linearGradient>
+              </defs>
+              <rect width="960" height="600" fill="url(#wheatifyGradient)" rx="42" />
+              <rect x="56" y="64" width="140" height="26" rx="13" fill="#020617" opacity="0.85" />
+              <text x="76" y="82" fill="#e5e7eb" font-size="16" font-family="JetBrains Mono" letter-spacing="4">
+                WHEATIFY
+              </text>
+              <rect x="56" y="120" width="848" height="2" fill="#111827" />
+              <rect x="76" y="150" width="220" height="120" rx="18" fill="#020617" opacity="0.85" />
+              <rect x="100" y="186" width="172" height="18" rx="9" fill="url(#wheatifyAccent)" />
+              <text x="100" y="178" fill="#9ca3af" font-size="10" font-family="JetBrains Mono" letter-spacing="3">
+                BATCH CONFIDENCE
+              </text>
+              <rect x="340" y="150" width="544" height="260" rx="22" fill="#020617" opacity="0.9" />
+              <rect x="360" y="180" width="504" height="6" rx="3" fill="#111827" />
+              <rect x="360" y="210" width="180" height="10" rx="5" fill="url(#wheatifyAccent)" />
+              <rect x="360" y="236" width="260" height="10" rx="5" fill="#1f2937" />
+              <rect x="360" y="262" width="120" height="10" rx="5" fill="#1f2937" />
+              <rect x="360" y="304" width="380" height="10" rx="5" fill="#1f2937" />
+              <circle cx="820" cy="192" r="10" fill="#22c55e" />
+              <text x="838" y="196" fill="#22c55e" font-size="11" font-family="JetBrains Mono" letter-spacing="3">
+                PASS
+              </text>
+              <text x="76" y="332" fill="#9ca3af" font-size="11" font-family="JetBrains Mono" letter-spacing="3">
+                YIELD · PURITY · DEFECTS
+              </text>
+            </svg>
+            <div class="visual-card-overlay"></div>
+            <figcaption class="visual-card-meta">
+              <span class="visual-tag">Computer Vision · Field AI</span>
+              <h3>WHEATIFY Grading Console</h3>
+              <p>Concept UI of a wheat seed grading dashboard powered by YOLO, designed for agronomists in the field.</p>
+            </figcaption>
+          </figure>
+
+          <figure class="visual-card">
+            <svg class="visual-card-img" viewBox="0 0 960 600" role="img"
+              aria-label="Voice waveform and call timeline illustrating an AI voice receptionist qualifying incoming leads.">
+              <defs>
+                <linearGradient id="voiceGradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#020617" />
+                  <stop offset="50%" stop-color="#111827" />
+                  <stop offset="100%" stop-color="#0b1120" />
+                </linearGradient>
+                <linearGradient id="voiceAccent" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#22c55e" />
+                  <stop offset="100%" stop-color="#a3e635" />
+                </linearGradient>
+              </defs>
+              <rect width="960" height="600" fill="url(#voiceGradient)" rx="42" />
+              <rect x="64" y="76" width="832" height="56" rx="18" fill="#020617" opacity="0.9" />
+              <circle cx="90" cy="104" r="10" fill="#22c55e" />
+              <text x="112" y="108" fill="#e5e7eb" font-size="14" font-family="JetBrains Mono" letter-spacing="3">
+                AI VOICE RECEPTIONIST · LIVE CALL
+              </text>
+              <rect x="64" y="158" width="832" height="160" rx="22" fill="#020617" opacity="0.9" />
+              <rect x="84" y="204" width="792" height="64" rx="14" fill="#0b1120" />
+              <!-- waveform bars -->
+              <g fill="url(#voiceAccent)">
+                <rect x="100" y="216" width="8" height="36" rx="4" />
+                <rect x="120" y="228" width="8" height="24" rx="4" />
+                <rect x="140" y="210" width="8" height="42" rx="4" />
+                <rect x="160" y="222" width="8" height="30" rx="4" />
+                <rect x="180" y="214" width="8" height="38" rx="4" />
+                <rect x="200" y="228" width="8" height="24" rx="4" />
+                <rect x="220" y="220" width="8" height="32" rx="4" />
+                <rect x="240" y="212" width="8" height="40" rx="4" />
+                <rect x="260" y="226" width="8" height="26" rx="4" />
+              </g>
+              <rect x="84" y="340" width="220" height="34" rx="17" fill="#022c22" />
+              <text x="102" y="362" fill="#6ee7b7" font-size="11" font-family="JetBrains Mono" letter-spacing="3">
+                LEAD QUALIFIED · 92%
+              </text>
+              <text x="84" y="404" fill="#9ca3af" font-size="11" font-family="JetBrains Mono" letter-spacing="3">
+                CRM SYNC · TIMELINE · NOTES
+              </text>
+            </svg>
+            <div class="visual-card-overlay"></div>
+            <figcaption class="visual-card-meta">
+              <span class="visual-tag">Autonomous Agents</span>
+              <h3>AI Voice Agent Timeline</h3>
+              <p>Visualization of an ElevenLabs + n8n powered call flow that qualifies real-estate leads and syncs them
+                into a CRM.</p>
+            </figcaption>
+          </figure>
+
+          <figure class="visual-card">
+            <svg class="visual-card-img" viewBox="0 0 960 600" role="img"
+              aria-label="Concept screen visualizing sensor data and gesture recognition from an ESP32 smart glove.">
+              <defs>
+                <linearGradient id="gloveGradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#020617" />
+                  <stop offset="40%" stop-color="#111827" />
+                  <stop offset="100%" stop-color="#020617" />
+                </linearGradient>
+                <linearGradient id="gloveAccent" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#3b82f6" />
+                  <stop offset="100%" stop-color="#22d3ee" />
+                </linearGradient>
+              </defs>
+              <rect width="960" height="600" fill="url(#gloveGradient)" rx="42" />
+              <rect x="72" y="96" width="816" height="56" rx="18" fill="#020617" opacity="0.9" />
+              <text x="96" y="126" fill="#e5e7eb" font-size="14" font-family="JetBrains Mono" letter-spacing="3">
+                ESP32 SIGN LANGUAGE GLOVE · TELEMETRY
+              </text>
+              <rect x="72" y="176" width="272" height="280" rx="26" fill="#020617" opacity="0.95" />
+              <rect x="104" y="216" width="208" height="200" rx="20" fill="#020617" stroke="#1d4ed8" stroke-width="2" />
+              <!-- simple glove outline -->
+              <path d="M132 388 C132 320 132 248 152 240 C168 234 176 250 180 268 L188 308 L192 240 C196 228 212 224 220 236
+                C228 248 228 288 230 320 L236 260 C240 246 256 244 264 256 C272 268 272 308 274 340 L280 276 C284 262 300 260 308 272
+                C316 284 316 324 316 360 C316 392 300 420 272 436 L216 456 C176 452 152 432 144 408 Z" fill="#020617" stroke="#38bdf8" stroke-width="3" />
+              <rect x="384" y="196" width="404" height="12" rx="6" fill="#020617" />
+              <rect x="384" y="196" width="260" height="12" rx="6" fill="url(#gloveAccent)" />
+              <text x="384" y="186" fill="#9ca3af" font-size="11" font-family="JetBrains Mono" letter-spacing="3">
+                SENSOR SIGNAL STABILITY
+              </text>
+              <!-- sensor charts -->
+              <polyline points="384,260 404,250 424,268 444,240 464,252 484,230 504,238 524,222 544,236 564,218 584,228" fill="none"
+                stroke="#38bdf8" stroke-width="2" />
+              <polyline points="384,298 404,304 424,296 444,306 464,292 484,302 504,294 524,300 544,296 564,304 584,298" fill="none"
+                stroke="#0ea5e9" stroke-width="2" opacity="0.6" />
+            </svg>
+            <div class="visual-card-overlay"></div>
+            <figcaption class="visual-card-meta">
+              <span class="visual-tag">IoT · Embedded</span>
+              <h3>Sign Language Glove Monitor</h3>
+              <p>Telemetry-style view of flex sensor signals translated into readable text and speech for accessibility.</p>
+            </figcaption>
+          </figure>
+
+          <figure class="visual-card">
+            <svg class="visual-card-img" viewBox="0 0 960 600" role="img"
+              aria-label="Cloud architecture map connecting EC2 instances, containers, and S3 buckets for AI workloads.">
+              <defs>
+                <linearGradient id="cloudGradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#020617" />
+                  <stop offset="45%" stop-color="#0f172a" />
+                  <stop offset="100%" stop-color="#020617" />
+                </linearGradient>
+                <linearGradient id="cloudAccent" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#f97316" />
+                  <stop offset="100%" stop-color="#facc15" />
+                </linearGradient>
+              </defs>
+              <rect width="960" height="600" fill="url(#cloudGradient)" rx="42" />
+              <text x="80" y="112" fill="#e5e7eb" font-size="14" font-family="JetBrains Mono" letter-spacing="3">
+                AWS EC2 · S3 · DOCKER · VPC
+              </text>
+              <!-- EC2 cluster -->
+              <rect x="80" y="150" width="260" height="180" rx="24" fill="#020617" opacity="0.95" />
+              <text x="104" y="180" fill="#9ca3af" font-size="11" font-family="JetBrains Mono" letter-spacing="3">
+                COMPUTE CLUSTER (EC2)
+              </text>
+              <rect x="104" y="200" width="72" height="52" rx="12" fill="#0b1120" stroke="#64748b" stroke-width="1.5" />
+              <rect x="188" y="200" width="72" height="52" rx="12" fill="#0b1120" stroke="#64748b" stroke-width="1.5" />
+              <rect x="104" y="264" width="72" height="52" rx="12" fill="#0b1120" stroke="#64748b" stroke-width="1.5" />
+              <rect x="188" y="264" width="72" height="52" rx="12" fill="#0b1120" stroke="#f97316" stroke-width="2" />
+
+              <!-- containers -->
+              <rect x="388" y="170" width="220" height="120" rx="22" fill="#020617" opacity="0.95" />
+              <text x="408" y="200" fill="#9ca3af" font-size="11" font-family="JetBrains Mono" letter-spacing="3">
+                CONTAINERIZED SERVICES
+              </text>
+              <rect x="408" y="214" width="56" height="40" rx="10" fill="#0b1120" stroke="#f97316" stroke-width="1.5" />
+              <rect x="472" y="214" width="56" height="40" rx="10" fill="#0b1120" stroke="#facc15" stroke-width="1.5" />
+              <rect x="536" y="214" width="56" height="40" rx="10" fill="#0b1120" stroke="#22c55e" stroke-width="1.5" />
+
+              <!-- S3 storage -->
+              <rect x="676" y="170" width="204" height="160" rx="24" fill="#020617" opacity="0.95" />
+              <text x="696" y="200" fill="#9ca3af" font-size="11" font-family="JetBrains Mono" letter-spacing="3">
+                OBJECT STORAGE (S3)
+              </text>
+              <rect x="704" y="216" width="148" height="80" rx="18" fill="#020617" stroke="#facc15" stroke-width="2" />
+              <rect x="720" y="236" width="116" height="10" rx="5" fill="url(#cloudAccent)" />
+              <rect x="720" y="256" width="88" height="10" rx="5" fill="#1f2937" />
+
+              <!-- connecting arrows -->
+              <path d="M340 220 H380" stroke="#f97316" stroke-width="2" marker-end="url(#arrowHead)" />
+              <path d="M608 220 H676" stroke="#facc15" stroke-width="2" marker-end="url(#arrowHead)" />
+
+              <defs>
+                <marker id="arrowHead" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 z" fill="#f97316" />
+                </marker>
+              </defs>
+            </svg>
+            <div class="visual-card-overlay"></div>
+            <figcaption class="visual-card-meta">
+              <span class="visual-tag">Cloud Architecture</span>
+              <h3>AWS Deployment Blueprint</h3>
+              <p>High-level EC2 and S3 topology for hosting AI models and backends with containerized deployments.</p>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills Grid -->
+    <section id="skills" class="relative py-20 md:py-28 px-6 md:px-10 lg:px-16">
+      <div class="max-w-6xl mx-auto">
+        <div class="reveal-up mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <p class="font-mono text-[10px] tracking-[0.35em] uppercase text-accent mb-3">Technical Skills</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold leading-tight">
+              A full-stack mindset<br />
+              across code, cloud &amp; AI.
+            </h2>
+          </div>
+          <p class="text-sm md:text-[15px] text-slate-300 max-w-md">
+            From low-level microcontrollers to orchestration in the cloud, I combine a strong engineering foundation
+            with
+            a bias for rapid, automation-first execution.
+          </p>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <!-- Languages -->
+          <div class="glass-card reveal-up rounded-2xl p-6 border border-white/10">
+            <h3 class="text-sm font-mono tracking-[0.25em] uppercase text-accent mb-4">Languages</h3>
+            <ul class="space-y-2 text-sm md:text-[15px] text-slate-200">
+              <li>Dart</li>
+              <li>Python</li>
+              <li>C / C++</li>
+              <li>MATLAB</li>
+              <li>SQL</li>
+              <li>Verilog</li>
+            </ul>
+          </div>
+
+          <!-- Mobile Development -->
+          <div class="glass-card reveal-up rounded-2xl p-6 border border-white/10">
+            <h3 class="text-sm font-mono tracking-[0.25em] uppercase text-accent mb-4">Mobile Development</h3>
+            <ul class="space-y-2 text-sm md:text-[15px] text-slate-200">
+              <li>Flutter</li>
+              <li>Firebase</li>
+              <li>REST APIs</li>
+              <li>State Management (Provider / Bloc)</li>
+              <li>UI / UX</li>
+            </ul>
+          </div>
+
+          <!-- AI & Cloud -->
+          <div class="glass-card reveal-up rounded-2xl p-6 border border-white/10">
+            <h3 class="text-sm font-mono tracking-[0.25em] uppercase text-accent mb-4">AI &amp; Cloud</h3>
+            <ul class="space-y-2 text-sm md:text-[15px] text-slate-200">
+              <li>Machine Learning</li>
+              <li>Computer Vision (OpenCV, YOLO)</li>
+              <li>AWS (EC2, S3)</li>
+              <li>n8n Automation</li>
+            </ul>
+          </div>
+
+          <!-- Tools & Hardware -->
+          <div class="glass-card reveal-up rounded-2xl p-6 border border-white/10">
+            <h3 class="text-sm font-mono tracking-[0.25em] uppercase text-accent mb-4">Tools &amp; Hardware</h3>
+            <ul class="space-y-2 text-sm md:text-[15px] text-slate-200">
+              <li>Git / GitHub</li>
+              <li>Docker</li>
+              <li>Linux (Ubuntu)</li>
+              <li>ESP32, Arduino</li>
+              <li>Xilinx ISE</li>
+              <li>Postman</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Education, Certifications & Honors -->
+    <section id="background" class="relative py-20 md:py-28 px-6 md:px-10 lg:px-16">
+      <div class="max-w-6xl mx-auto">
+        <div class="reveal-up mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <p class="font-mono text-[10px] tracking-[0.35em] uppercase text-accent mb-3">Profile</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold leading-tight">
+              Strong academic foundation,<br />
+              shipping real-world AI systems.
+            </h2>
+          </div>
+          <p class="text-sm md:text-[15px] text-slate-300 max-w-md">
+            Final-year Computer Engineering student (8th semester) with hands-on experience across AI, cloud, mobile
+            development and IoT — backed by a CGPA of 3.44/4.00.
+          </p>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-3">
+          <!-- Education -->
+          <div class="glass-card reveal-up rounded-2xl p-6 border border-white/10 flex flex-col gap-3">
+            <h3 class="text-sm font-mono tracking-[0.25em] uppercase text-accent">Education</h3>
+            <div class="text-sm md:text-[15px] text-slate-200">
+              <p class="font-semibold">Bahria University H-11</p>
+              <p>Bachelor of Science in Computer Engineering</p>
+              <p class="text-slate-400 text-xs mt-1">Islamabad, Pakistan · July 2022 – July 2026 (Expected)</p>
+              <p class="text-slate-300 text-xs mt-2">Final Year Student (8th Semester)</p>
+              <p class="text-accent text-xs font-mono tracking-[0.25em] uppercase mt-3">CGPA: 3.44 / 4.00</p>
+            </div>
+          </div>
+
+          <!-- Certifications -->
+          <div class="glass-card reveal-up rounded-2xl p-6 border border-white/10 flex flex-col gap-3">
+            <h3 class="text-sm font-mono tracking-[0.25em] uppercase text-accent">Certifications</h3>
+            <ul class="space-y-2 text-sm md:text-[15px] text-slate-200">
+              <li>Google Cybersecurity Professional Certificate (Coursera)</li>
+              <li>Flutter &amp; Dart – Complete App Development (Udemy)</li>
+              <li>Microsoft Office Specialist: Excel (Microsoft)</li>
+            </ul>
+          </div>
+
+          <!-- Honors & Awards -->
+          <div class="glass-card reveal-up rounded-2xl p-6 border border-white/10 flex flex-col gap-3">
+            <h3 class="text-sm font-mono tracking-[0.25em] uppercase text-accent">Honors &amp; Awards</h3>
+            <p class="text-sm md:text-[15px] text-slate-200">
+              Prime Minister's Laptop Scheme Award (2025)
+            </p>
+            <p class="text-xs text-slate-400">
+              Awarded by the Government of Pakistan for outstanding academic merit and performance in higher education.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section id="cta" class="relative py-24 md:py-32 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <div class="pointer-events-none absolute inset-0 opacity-60">
+        <div class="absolute inset-0 bg-radial from-accent/20 via-transparent to-transparent"></div>
+      </div>
+
+      <div class="max-w-4xl mx-auto text-center relative z-10">
+        <p class="reveal-up font-mono text-[10px] tracking-[0.35em] uppercase text-accent mb-4">Let's Build</p>
+        <h2 class="reveal-up font-display text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
+          Start Building the Future<br />
+          of AI Today.
+        </h2>
+        <p class="reveal-up text-sm md:text-base text-slate-300 max-w-2xl mx-auto mb-8">
+          Whether it's autonomous agents, intelligent interfaces, or end-to-end cloud deployments, I'm interested in
+          collaborations that push the boundary between what is manual today and what can be automated tomorrow.
+        </p>
+        <div class="reveal-up flex flex-wrap items-center justify-center gap-4">
+          <a
+            href="mailto:shahsyedasad968@gmail.com?subject=Collaboration%20with%20Syed%20Asad%20Iftikhar"
+            class="magnetic inline-flex items-center justify-center rounded-full bg-accent text-black px-8 py-3 font-mono text-[11px] tracking-[0.25em] uppercase shadow-[0_0_35px_rgba(255,69,0,0.7)] hover:bg-[#ff5e1a] transition">
+            Hire / Collaborate
+          </a>
+          <a
+            href="https://www.linkedin.com/in/syed-asad-iftikhar-a4a738247/"
+            target="_blank"
+            rel="noreferrer"
+            class="magnetic inline-flex items-center justify-center rounded-full border border-accent/50 text-accent px-8 py-3 font-mono text-[11px] tracking-[0.25em] uppercase bg-black/40 hover:bg-accent hover:text-black transition">
+            View Full Profile
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer
+      class="border-t border-white/10 py-6 px-6 md:px-10 lg:px-16 text-xs text-slate-500 flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="font-mono tracking-[0.25em] uppercase text-slate-500">
+        Syed Asad <span class="text-accent">Iftikhar</span>
+      </div>
+      <div class="text-[11px] font-mono tracking-[0.2em] uppercase text-slate-500">
+        © <span id="year"></span> Syed Asad Iftikhar. All rights reserved.
+      </div>
+      <div class="flex items-center gap-4 text-[11px] font-mono tracking-[0.25em] uppercase">
+        <a href="https://www.linkedin.com/in/syed-asad-iftikhar-a4a738247/" target="_blank" rel="noreferrer"
+          class="hover:text-accent transition">LinkedIn</a>
+        <a href="https://github.com/Syedasadiftikhar" target="_blank" rel="noreferrer"
+          class="hover:text-accent transition">GitHub</a>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
